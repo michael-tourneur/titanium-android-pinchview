@@ -59,7 +59,11 @@ pinchView.addEventListener('multiMove',function(e) {
 	startTop = view.top;
 });
 
-pinchView.addEventListener('doubletap', function(e) {
+pinchView.addEventListener('doubletap',function(e) {
 	Ti.API.debug("DOUBLE TAP");
+});
+
+pinchView.addEventListener('singletap',function(e) {
+	Ti.API.debug('SINGLE TAP');
 });
 

@@ -3,8 +3,6 @@ package jp.co.so2.pinch;
 import org.appcelerator.kroll.KrollDict;
 import org.appcelerator.titanium.proxy.TiViewProxy;
 import org.appcelerator.titanium.view.TiUIView;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -69,25 +67,15 @@ public class UIPinchView extends TiUIView
 				pinchDetector.onTouchEvent(e);
 			
 			final int action = e.getAction();
-			
-			
-			JSONObject json = new JSONObject();
-			KrollDict eventData = null;
+			KrollDict eventData = new KrollDict();
 			
 			
 			switch(action & MotionEvent.ACTION_MASK) {
 			case MotionEvent.ACTION_DOWN: {
 				final float x = e.getX();
 				final float y = e.getY();
-				try {
-					json.put("x", x);
-					json.put("y", y);
-					eventData = new KrollDict(json);
-				}
-				catch (JSONException exc) {
-					Log.e("PinchView:onTouchEvent", exc.getMessage());
-					return false;
-				}
+				eventData.put("x", e.getX());
+				eventData.put("y", e.getY());
 				proxy.fireEvent("multiStart", eventData);
 				activePointerId = e.getPointerId(0);
 				lastX = x;
@@ -96,19 +84,14 @@ public class UIPinchView extends TiUIView
 				}
 			case MotionEvent.ACTION_MOVE: {
 				final int pointerIndex = e.findPointerIndex(activePointerId);
+				if(pointerIndex == INVALID_POINTER_ID)
+					break;
 				final float x = e.getX(pointerIndex);
 				final float y = e.getY(pointerIndex);
 				if(!pinchDetector.isInProgress())
 				{
-					try {
-						json.put("x", x - lastX);
-						json.put("y", y - lastY);
-						eventData = new KrollDict(json);
-					}
-					catch (JSONException exc) {
-						Log.e("PinchView:onTouchEvent", exc.getMessage());
-						return false;
-					}
+					eventData.put("x", x - lastX);
+					eventData.put("y", y - lastY);
 					proxy.fireEvent("multiMove", eventData);
 				}
 				lastX = x;
@@ -117,6 +100,8 @@ public class UIPinchView extends TiUIView
 				}
 			case MotionEvent.ACTION_UP: {
 				activePointerId = INVALID_POINTER_ID;
+				eventData.put("x", e.getX());
+				eventData.put("y", e.getY());
 				proxy.fireEvent("multiEnd", eventData);
 				break;
 				}
@@ -143,16 +128,9 @@ public class UIPinchView extends TiUIView
 				
 				scaleFactor = Math.max(minZoom, Math.min(scaleFactor, maxZoom));
 				invalidate();
-				
-				JSONObject json = new JSONObject();
-				KrollDict eventData = null;
-				try {
-					json.put("scale", scaleFactor);
-					eventData = new KrollDict(json);
-				} catch (JSONException e) {
-					Log.e("PinchView:onScale", e.getMessage());
-				}
-				
+
+				KrollDict eventData = new KrollDict();
+				eventData.put("scale", scaleFactor);				
 				proxy.fireEvent("pinch", eventData);
 				
 				return true;
