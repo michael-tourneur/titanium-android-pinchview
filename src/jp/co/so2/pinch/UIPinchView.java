@@ -88,7 +88,7 @@ public class UIPinchView extends TiUIView
 					break;
 				final float x = e.getX(pointerIndex);
 				final float y = e.getY(pointerIndex);
-				if(!pinchDetector.isInProgress())
+				if(pinchDetector != null && !pinchDetector.isInProgress())
 				{
 					eventData.put("x", x - lastX);
 					eventData.put("y", y - lastY);
