@@ -32,8 +32,6 @@ public class UIPinchView extends TiUIView
 			maxZoom = d.getDouble("maxZoomValue").floatValue();
 		if(d.containsKeyAndNotNull("minZoomValue"))
 			minZoom = d.getDouble("minZoomValue").floatValue();
-		
-		Log.d("UIPinchView", minZoom + " " + maxZoom);
 	}
 	
 	public void setMaxZoomValue(float maxZoom)
@@ -58,6 +56,8 @@ public class UIPinchView extends TiUIView
 			super(c);
 			if(c.getPackageManager().hasSystemFeature(PackageManager.FEATURE_TOUCHSCREEN_MULTITOUCH))
 				pinchDetector = new ScaleGestureDetector(c, new ScaleListener());
+			else
+				Log.i("UIPinchView","Multitouch not supported on this device!");
 		}
 		
 		@Override
@@ -88,7 +88,7 @@ public class UIPinchView extends TiUIView
 					break;
 				final float x = e.getX(pointerIndex);
 				final float y = e.getY(pointerIndex);
-				if(pinchDetector == null || !pinchDetector.isInProgress())
+				if(!pinchDetector.isInProgress())
 				{
 					eventData.put("x", x - lastX);
 					eventData.put("y", y - lastY);
