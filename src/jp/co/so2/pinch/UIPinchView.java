@@ -17,6 +17,7 @@ public class UIPinchView extends TiUIView
 	public PinchView tiPinchView;
 	private float maxZoom = 5.f;
 	private float minZoom = 0.1f;
+	private float curZoom = 1.f;
 	
 	public UIPinchView(TiViewProxy proxy)
 	{
@@ -44,11 +45,16 @@ public class UIPinchView extends TiUIView
 		this.minZoom = minZoom;
 	}
 	
+	public void setCurZoomValue(float curZoom)
+	{
+		this.curZoom = curZoom;
+	}
+	
 	public class PinchView extends View {
 		private static final int INVALID_POINTER_ID = -1;
 		private int activePointerId;
 		private ScaleGestureDetector pinchDetector;
-		private float scaleFactor = 1.f;
+		
 		private float lastX, lastY;
 		
 		public PinchView(Context c)
@@ -88,7 +94,7 @@ public class UIPinchView extends TiUIView
 					break;
 				final float x = e.getX(pointerIndex);
 				final float y = e.getY(pointerIndex);
-				if(!pinchDetector.isInProgress())
+				if(pinchDetector == null || !pinchDetector.isInProgress())
 				{
 					eventData.put("x", x - lastX);
 					eventData.put("y", y - lastY);
@@ -124,13 +130,13 @@ public class UIPinchView extends TiUIView
 		private class ScaleListener extends SimpleOnScaleGestureListener {
 			@Override
 			public boolean onScale(ScaleGestureDetector detector) {
-				scaleFactor *= detector.getScaleFactor();
+				curZoom *= detector.getScaleFactor();
 				
-				scaleFactor = Math.max(minZoom, Math.min(scaleFactor, maxZoom));
+				curZoom = Math.max(minZoom, Math.min(curZoom, maxZoom));
 				invalidate();
 
 				KrollDict eventData = new KrollDict();
-				eventData.put("scale", scaleFactor);				
+				eventData.put("scale", curZoom);				
 				proxy.fireEvent("pinch", eventData);
 				
 				return true;

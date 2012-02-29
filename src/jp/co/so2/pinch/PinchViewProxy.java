@@ -46,4 +46,11 @@ public class PinchViewProxy extends TiViewProxy
 	{
 		pinchView.setMinZoomValue(minZoom);
 	}
+	
+	@Kroll.setProperty
+	@Kroll.method
+	public void setCurZoomValue(float curZoom)
+	{
+		pinchView.setCurZoomValue(curZoom);
+	}
 }
