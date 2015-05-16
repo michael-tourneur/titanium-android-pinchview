@@ -1,0 +1,1 @@
+As far as I know, Titanium has zero support for pinch or any multitouch as of version 1.8.1.  This simple module will create a view that broadcasts pinch events.  It has been tested on 1.8.0.1 (and the example works on 1.8.1).
